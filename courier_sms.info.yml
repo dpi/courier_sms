@@ -5,3 +5,5 @@ core: 8.x
 dependencies:
   - courier
   - sms
+  - sms_user
+  - telephone
