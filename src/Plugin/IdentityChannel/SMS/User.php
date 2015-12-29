@@ -36,7 +36,7 @@ class User implements IdentityChannelPluginInterface {
     if (empty($identity->sms_user['number'])) {
       throw new IdentityException('User does not have a phone number.');
     }
-    if (empty($identity->sms_user['code']) || $identity->sms_user['code'] !== SMS_USER_CONFIRMED) {
+    if (empty($identity->sms_user['status']) || $identity->sms_user['status'] != SMS_USER_CONFIRMED) {
       throw new IdentityException('User has not confirmed phone number.');
     }
 
