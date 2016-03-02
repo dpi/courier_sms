@@ -8,9 +8,9 @@
 namespace Drupal\courier_sms\Entity;
 
 use Drupal\courier\ChannelBase;
-use Drupal\courier_sms\SmsMessageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\courier_sms\SmsMessageInterface;
 
 /**
  * Defines storage for a SMS.
@@ -42,6 +42,52 @@ use Drupal\Core\Field\BaseFieldDefinition;
 class SmsMessage extends ChannelBase implements SmsMessageInterface {
 
   /**
+   * The unique identifier for this message.
+   *
+   * @var string
+   */
+  protected $uuid;
+
+  /**
+   * The sender of the message.
+   *
+   * @var string
+   */
+  protected $sender;
+
+  /**
+   * @var array
+   *   The recipients of the message.
+   */
+  protected $recipients = array();
+
+  /**
+   * @var string
+   *   The content of the message to be sent.
+   */
+  protected $message;
+
+  /**
+   * @var string
+   *   Other options to be used for the sms.
+   */
+  protected $options = array();
+
+  /**
+   * The UID of the creator of the SMS message.
+   *
+   * @var int
+   */
+  protected $uid;
+
+  /**
+   * Whether this message was generated automatically.
+   *
+   * @var bool
+   */
+  protected $automated = TRUE;
+
+  /**
    * {@inheritdoc}
    *
    * Returns singular recipient.
@@ -53,8 +99,29 @@ class SmsMessage extends ChannelBase implements SmsMessageInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRecipient() {
-    return $this->get('phone')->value;
+  public function addRecipient($recipient) {
+    if (!in_array($recipient, $this->recipients)) {
+      $this->recipients[] = $recipient;
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addRecipients(array $recipients) {
+    foreach ($recipients as $recipient) {
+      $this->addRecipient($recipient);
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeRecipient($recipient) {
+    $this->recipients = array_values(array_diff($this->recipients, [$recipient]));
+    return $this;
   }
 
   /**
@@ -91,11 +158,35 @@ class SmsMessage extends ChannelBase implements SmsMessageInterface {
 
   /**
    * {@inheritdoc}
+   */
+  public function setSender($sender) {
+    $this->sender = $sender;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * No storage, only used in current request.
    */
   public function getOptions() {
     return $this->options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOption($name, $value) {
+    $this->options[$name] = $value;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeOption($name) {
+    unset($this->options[$name]);
+    return $this;
   }
 
   /**
@@ -129,17 +220,24 @@ class SmsMessage extends ChannelBase implements SmsMessageInterface {
   /**
    * {@inheritdoc}
    */
-  public function applyTokens() {
-    $tokens = $this->getTokenValues();
-    $this->setMessage(\Drupal::token()->replace($this->getMessage(), $tokens));
+  public function setUid($uid) {
+    $this->uid = $uid;
     return $this;
   }
 
   /**
    * {@inheritdoc}
    */
-  function isEmpty() {
-    return empty($this->getMessage());
+  public function setAutomated($automated) {
+    $this->automated = $automated;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isAutomated() {
+    return $this->automated;
   }
 
   /**
@@ -153,6 +251,22 @@ class SmsMessage extends ChannelBase implements SmsMessageInterface {
     foreach ($messages as $message) {
       $sms_service->send($message, $options);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function applyTokens() {
+    $tokens = $this->getTokenValues();
+    $this->setMessage(\Drupal::token()->replace($this->getMessage(), $tokens));
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function isEmpty() {
+    return empty($this->getMessage());
   }
 
   /**
