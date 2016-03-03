@@ -127,6 +127,14 @@ class SmsMessage extends ChannelBase implements SmsMessageInterface {
   /**
    * {@inheritdoc}
    */
+  public function removeRecipients(array $recipients) {
+    $this->recipients = array_values(array_diff($this->recipients, $recipients));
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setRecipient($phone_number) {
     $this->set('phone', ['value' => $phone_number]);
     return $this;
