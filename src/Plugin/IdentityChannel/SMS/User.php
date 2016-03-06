@@ -12,6 +12,7 @@ use Drupal\courier\Plugin\IdentityChannel\IdentityChannelPluginInterface;
 use Drupal\courier\ChannelInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\courier\Exception\IdentityException;
+use Drupal\sms\Exception\PhoneNumberSettingsException;
 
 /**
  * Supports core user entities.
@@ -33,14 +34,22 @@ class User implements IdentityChannelPluginInterface {
     /** @var \Drupal\user\UserInterface $identity */
     /** @var \Drupal\courier_sms\Entity\SmsMessage $message */
 
-    if (empty($identity->sms_user['number'])) {
-      throw new IdentityException('User does not have a phone number.');
-    }
-    if (empty($identity->sms_user['status']) || $identity->sms_user['status'] != SMS_USER_CONFIRMED) {
-      throw new IdentityException('User has not confirmed phone number.');
-    }
 
-    $message->setRecipient($identity->sms_user['number']);
+    /** @var \Drupal\sms\Provider\PhoneNumberProviderInterface $phone_number_provider */
+    $phone_number_provider = \Drupal::service('sms.phone_number');
+
+    try {
+      $phone_numbers = $phone_number_provider->getPhoneNumbers($identity);
+      if ($phone_number = reset($phone_numbers)) {
+        $message->setRecipient($phone_number);
+      }
+      else {
+        throw new IdentityException('User does not have any confirmed phone numbers.');
+      }
+    }
+    catch (PhoneNumberSettingsException $e) {
+      throw new IdentityException('Users are not configured for phone numbers.');
+    }
   }
 
 }
