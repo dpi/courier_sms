@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\courier_sms\SmsMessageInterface.
- */
-
 namespace Drupal\courier_sms;
 
 use Drupal\courier\ChannelInterface;

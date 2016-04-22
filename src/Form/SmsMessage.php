@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\courier_sms\Form\SmsMessage.
- */
-
 namespace Drupal\courier_sms\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;

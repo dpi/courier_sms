@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\courier_sms\Plugin\IdentityChannel\SMS\User.
- */
-
 namespace Drupal\courier_sms\Plugin\IdentityChannel\SMS;
 
 

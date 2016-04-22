@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\courier_sms\Entity\SmsMessage.
- */
-
 namespace Drupal\courier_sms\Entity;
 
 use Drupal\courier\ChannelBase;
