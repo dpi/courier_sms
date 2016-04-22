@@ -19,8 +19,8 @@ use Drupal\sms\Exception\PhoneNumberSettingsException;
  *
  * @IdentityChannel(
  *   id = "identity:user:sms",
- *   label = @Translation("Drupal user to sms"),
- *   channel = "sms",
+ *   label = @Translation("Drupal user to SMS"),
+ *   channel = "courier_sms",
  *   identity = "user",
  *   weight = 10
  * )
@@ -29,12 +29,11 @@ class User implements IdentityChannelPluginInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\courier_sms\Entity\SmsMessage $message
+   * @param \Drupal\user\UserInterface $identity
    */
   public function applyIdentity(ChannelInterface &$message, EntityInterface $identity) {
-    /** @var \Drupal\user\UserInterface $identity */
-    /** @var \Drupal\courier_sms\Entity\SmsMessage $message */
-
-
     /** @var \Drupal\sms\Provider\PhoneNumberProviderInterface $phone_number_provider */
     $phone_number_provider = \Drupal::service('sms.phone_number');
 
