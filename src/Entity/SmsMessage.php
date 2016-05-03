@@ -38,7 +38,6 @@ use Drupal\sms\Entity\SmsMessageInterface as SmsMessageEntityInterface;
  */
 class SmsMessage extends ChannelBase implements SmsMessageInterface {
 
-
   /**
    * {@inheritdoc}
    */
@@ -101,6 +100,22 @@ class SmsMessage extends ChannelBase implements SmsMessageInterface {
    */
   function isEmpty() {
     return empty($this->getMessage());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importTemplate($content) {
+    $this->setMessage($content['message']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function exportTemplate() {
+    return [
+      'message' => $this->getMessage(),
+    ];
   }
 
   /**
