@@ -2,9 +2,12 @@
 
 namespace Drupal\courier_sms;
 
-use Drupal\courier\ChannelInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 
-interface SmsMessageInterface extends ChannelInterface {
+/**
+ * Defines an interface for the SMS message entity.
+ */
+interface SmsMessageInterface extends ContentEntityInterface {
 
   /**
    * Gets the recipient SMS message.
